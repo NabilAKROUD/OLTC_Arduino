@@ -92,6 +92,8 @@ void setup()
 	{  
 		Mb.MbData[ 0] =	0      	;
 		Mb.MbData[ 1] =	SetP   	;
+		Mb.MbData[20] =	99		;					//reset FMU input.
+		Mb.MbData[21] =	0		;					//reset Switch between FMU/physical input.
 		
 		resetBands();
 	}
@@ -100,10 +102,10 @@ void setup()
 	{
 		CBLQ_H = Mb.MbData[ 1] * (1 - 0.05);		//CBLQ_H = Mb.MbData[ 1] * (1 + 0.30);
 		CQCK_H = Mb.MbData[ 1] * (1 - 0.10);		//CQCK_H = Mb.MbData[ 1] * (1 + 0.20);	
-		CNOR_H = Mb.MbData[ 1] * (1 - 0.15);		//CNOR_H = Mb.MbData[ 1] * (1 + 0.10);	
+	//	CNOR_H = Mb.MbData[ 1] * (1 - 0.15);		//CNOR_H = Mb.MbData[ 1] * (1 + 0.10);	
 		CTOL_H = Mb.MbData[ 1] * (1 - 0.20);		//CTOL_H = Mb.MbData[ 1] * (1 + 0.05);	
 		CTOL_L = Mb.MbData[ 1] * (1 - 0.25);		//CTOL_L = Mb.MbData[ 1] * (1 - 0.05);	
-		CNOR_L = Mb.MbData[ 1] * (1 - 0.30);		//CNOR_L = Mb.MbData[ 1] * (1 - 0.10);	
+	//	CNOR_L = Mb.MbData[ 1] * (1 - 0.30);		//CNOR_L = Mb.MbData[ 1] * (1 - 0.10);	
 		CQCK_L = Mb.MbData[ 1] * (1 - 0.35);		//CQCK_L = Mb.MbData[ 1] * (1 - 0.20);	
 		CBLQ_L = Mb.MbData[ 1] * (1 - 0.40);		//CBLQ_L = Mb.MbData[ 1] * (1 - 0.30);	
 				
@@ -116,6 +118,8 @@ void setup()
 		Mb.MbData[ 8] = CQCK_L	;
 		Mb.MbData[ 9] = CBLQ_L	;
 		Mb.MbData[10] =	0      	;
+		
+		
 	}
 	
 /**				LOOP				**/
@@ -133,8 +137,8 @@ void loop()
 	total = total + readings[readIndex];
 	readIndex++;
 	if (readIndex >= numReadings)  readIndex = 0;
-	
-	average = Mb.MbData[ 1] * (total / numReadings) / 1023;
+	if (Mb.MbData[21] ==1)	{average=Mb.MbData[20];}
+			else			{average= Mb.MbData[ 1] * (total / numReadings) / 1023;}
 /*****************SD**********************/
 	
 	int InstVolt = analogRead(inputVoltage);
@@ -153,6 +157,7 @@ void loop()
 	else	if	(average <= CBLQ_L)                    	{Status = "Under Voltage_________________"; Position = 64 ; } // Blocked
 	}
 //*********************************************************
+		Mb.MbData[10]=  		Position 	; // Blocked
 		Mb.MbData[13]=  bitRead(Position,6) ; // Blocked
 		Mb.MbData[14]=  bitRead(Position,5) ; // Step++
 		Mb.MbData[15]=  bitRead(Position,4) ; // Step+
