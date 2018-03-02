@@ -125,10 +125,10 @@ void setup()
 /**				LOOP				**/
 void loop()
 {
-		delay(1000);
+		//delay(1000);
 		resetBands();
 		Mb.MbData[ 0] = i;i++;
-		Mb.MbData[12] = digitalRead(ReadyPin);	// Ready input
+		Mb.MbData[12] = 1; //digitalRead(ReadyPin);	// Ready input
 		Mb.MbData[11] =  map(analogRead(InputTAP), 0, 1023, 0, 8); // Taps Output
 
 /**		Average calculation		**/
